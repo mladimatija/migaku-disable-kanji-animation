@@ -4,14 +4,17 @@
  * Chrome injects this before the page renders, so even if the script is a few
  * milliseconds late there is nothing to flash. Keep in sync with
  * src/selectors.ts (READY_ATTR).
+ *
+ * Selectors are spelled out one per line on purpose: the space between the
+ * root and the child class is a descendant combinator. An IDE reformat once
+ * collapsed `:not(...) :is(...)` into `:not(...):is(...)`, which silently
+ * matched nothing. The "falls back to the drawing" e2e test catches that.
  */
-.UiStrokeOrder:not([data-mdka-ready]):is(
-		.UiStrokeOrder__graph,
-		.UiStrokeOrder__cross,
-		.UiStrokeOrder__progress,
-		.UiStrokeOrder__buttons-start,
-		.UiStrokeOrder__buttons-end,
-		.UiStrokeOrder__autoplay
-	) {
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__graph,
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__cross,
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__progress,
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__buttons-start,
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__buttons-end,
+.UiStrokeOrder:not([data-mdka-ready]) .UiStrokeOrder__autoplay {
 	visibility: hidden !important;
 }
