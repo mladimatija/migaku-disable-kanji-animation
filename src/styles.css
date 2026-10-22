@@ -1,0 +1,17 @@
+/*
+ * Hide the stroke-order drawing (and its controls) on every kanji card until
+ * the content script has switched it to font preview and set data-mdka-ready.
+ * Chrome injects this before the page renders, so even if the script is a few
+ * milliseconds late there is nothing to flash. Keep in sync with
+ * src/selectors.ts (READY_ATTR).
+ */
+.UiStrokeOrder:not([data-mdka-ready]):is(
+		.UiStrokeOrder__graph,
+		.UiStrokeOrder__cross,
+		.UiStrokeOrder__progress,
+		.UiStrokeOrder__buttons-start,
+		.UiStrokeOrder__buttons-end,
+		.UiStrokeOrder__autoplay
+	) {
+	visibility: hidden !important;
+}

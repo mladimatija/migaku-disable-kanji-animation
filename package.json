@@ -1,0 +1,78 @@
+{
+	"name": "migaku-disable-kanji-animation",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Chrome extension that opens Migaku kanji cards in font preview instead of the stroke-order drawing animation.",
+	"keywords": [
+		"chrome-extension",
+		"migaku",
+		"kanji",
+		"japanese",
+		"stroke-order"
+	],
+	"author": {
+		"name": "Matija Culjak",
+		"url": "https://matijaculjak.com"
+	},
+	"license": "MIT",
+	"homepage": "https://github.com/mladimatija/migaku-disable-kanji-animation#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mladimatija/migaku-disable-kanji-animation.git"
+	},
+	"bugs": {
+		"url": "https://github.com/mladimatija/migaku-disable-kanji-animation/issues"
+	},
+	"type": "module",
+	"scripts": {
+		"postinstall": "simple-git-hooks",
+		"clean": "node scripts/clean.js",
+		"type-check": "tsc --noEmit",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"check": "npm run lint && npm run format:check && npm run type-check",
+		"predev": "node scripts/clean.js && node scripts/build-icons.js",
+		"dev": "vite",
+		"prebuild": "node scripts/clean.js && node scripts/build-icons.js && npm run type-check",
+		"build": "vite build",
+		"icons": "node scripts/build-icons.js",
+		"package": "npm run build && cd dist && zip -r ../migaku-disable-kanji-animation.zip .",
+		"pretest": "npm run build",
+		"test": "playwright test",
+		"test:install": "playwright install --with-deps chromium"
+	},
+	"engines": {
+		"node": ">=22.12"
+	},
+	"devDependencies": {
+		"@crxjs/vite-plugin": "^2.7.1",
+		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.62.1",
+		"@types/chrome": "^0.2.5",
+		"@types/node": "^26.2.0",
+		"eslint": "^10.8.1",
+		"eslint-config-prettier": "^10.1.8",
+		"globals": "^17.9.0",
+		"lint-staged": "^17.3.0",
+		"prettier": "^3.9.6",
+		"sharp": "^0.35.3",
+		"simple-git-hooks": "^2.13.1",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.66.0",
+		"vite": "^8.2.1"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "npx lint-staged"
+	},
+	"lint-staged": {
+		"*.{ts,js,mjs,cjs}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{json,md,css,html,yml,yaml}": [
+			"prettier --write"
+		]
+	}
+}
