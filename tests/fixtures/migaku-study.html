@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Migaku Memory (fixture)</title>
+<!--
+  Minimal stand-in for Migaku's study screen. It mirrors the parts of the real
+  DOM the extension relies on (see src/selectors.ts) and the behaviour that
+  matters for the flash test:
+    - the back of the card mounts a fresh .UiStrokeOrder in DRAWING mode,
+    - the "Aa" button re-renders asynchronously (queueMicrotask, like Vue),
+    - .UiStrokeOrder__character-view exists only in font mode,
+    - in font mode Migaku hides the graph / cross / autoplay with visibility.
+  Query flags: ?startFont=1 mounts in font mode, ?noToggle=1 omits the Aa button.
+-->
+<style>
+  body { font-family: sans-serif; margin: 0; background: #ece6ff; }
+  .card { width: 480px; margin: 40px auto; background: #fff; border-radius: 16px; padding: 24px; text-align: center; }
+  .front { font-size: 96px; }
+  .UiStrokeOrder__bar { display: flex; justify-content: space-between; align-items: center; }
+  .UiStrokeOrder__main { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .UiStrokeOrder__character { position: relative; width: 240px; height: 240px; }
+  .UiStrokeOrder__character-view { position: absolute; inset: 0; font-size: 200px; line-height: 240px; }
+  .UiStrokeOrder__cross, .UiStrokeOrder__graph { position: absolute; inset: 0; }
+  .UiStrokeOrder__cross { border: 1px dashed #aaa; }
+  .UiStrokeOrder__graph path { stroke: #00005a; stroke-width: 6; fill: none; }
+  .UiStrokeOrder__progress { height: 4px; background: #00005a; margin-top: 8px; }
+  .UiStrokeOrder.-font :is(.UiStrokeOrder__graph, .UiStrokeOrder__cross, .UiStrokeOrder__autoplay, .UiStrokeOrder__progress, .UiStrokeOrder__buttons-start, .UiStrokeOrder__buttons-end) { visibility: hidden; }
+</style>
+</head>
+<body>
+<div class="card" id="card"></div>
+<button id="next" type="button">Next card</button>
+<script>
+  const params = new URLSearchParams(location.search);
+  const KANJI = ['其', '角', '八'];
+  let index = 0;
+  let flipped = false;
+
+  const card = document.getElementById('card');
+
+  function showFront() {
+    flipped = false;
+    card.innerHTML = '<div class="front">' + KANJI[index] + '</div>';
+  }
+
+  // Mount the back of the card - a brand-new .UiStrokeOrder each time,
+  // exactly like Migaku's Vue component on every flip.
+  function flip() {
+    if (flipped) return;
+    flipped = true;
+    const kanji = KANJI[index];
+    let font = params.has('startFont');
+
+    const root = document.createElement('div');
+    root.className = 'UiStrokeOrder';
+    root.innerHTML =
+      '<div class="UiStrokeOrder__bar">' +
+        (params.has('noToggle') ? '<span></span>' : '<button type="button" class="UiStrokeOrder__show-character" title="Show character">Aa</button>') +
+        '<div class="UiStrokeOrder__label">KANJI</div>' +
+        '<button type="button" class="UiStrokeOrder__autoplay" title="Autoplay">&#9654;</button>' +
+      '</div>' +
+      '<div class="UiStrokeOrder__main">' +
+        '<div class="UiStrokeOrder__buttons-start"><button type="button" title="Previous">&lsaquo;</button></div>' +
+        '<div class="UiStrokeOrder__base">' +
+          '<div class="UiStrokeOrder__character"></div>' +
+          '<div class="UiStrokeOrder__progress"></div>' +
+        '</div>' +
+        '<div class="UiStrokeOrder__buttons-end"><button type="button" title="Next">&rsaquo;</button></div>' +
+      '</div>';
+
+    const character = root.querySelector('.UiStrokeOrder__character');
+    const render = () => {
+      root.classList.toggle('-font', font);
+      character.innerHTML =
+        (font ? '<div class="UiStrokeOrder__character-view">' + kanji + '</div>' : '') +
+        '<div class="UiStrokeOrder__cross"></div>' +
+        '<div class="UiStrokeOrder__graph"><svg viewBox="0 0 109 109"><g id="kvg:StrokePaths_' +
+          kanji.codePointAt(0).toString(16).padStart(5, '0') +
+          '"><path d="M20 30 H90"/><path d="M54 10 V100"/><path d="M20 80 H90"/></g></svg></div>';
+    };
+    render();
+
+    root.querySelector('.UiStrokeOrder__show-character')?.addEventListener('click', () => {
+      // Vue batches DOM updates into a microtask - mimic that.
+      queueMicrotask(() => { font = !font; render(); });
+    });
+
+    card.innerHTML = '';
+    card.appendChild(root);
+  }
+
+  document.addEventListener('keydown', (e) => { if (e.code === 'Space') { e.preventDefault(); flip(); } });
+  card.addEventListener('click', flip);
+  document.getElementById('next').addEventListener('click', () => { index = (index + 1) % KANJI.length; showFront(); });
+  showFront();
+</script>
+</body>
+</html>

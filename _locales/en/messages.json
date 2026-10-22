@@ -1,0 +1,10 @@
+{
+	"extensionName": {
+		"message": "Disable Kanji Animation for Migaku",
+		"description": "Extension name shown in chrome://extensions."
+	},
+	"extensionDescription": {
+		"message": "Unofficial: opens Migaku kanji cards in font preview instead of the stroke-order drawing animation.",
+		"description": "Short blurb shown in chrome://extensions and the Chrome Web Store listing. Stay under 132 characters."
+	}
+}
