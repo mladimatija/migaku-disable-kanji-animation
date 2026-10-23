@@ -1,6 +1,6 @@
 # Disable Kanji Animation for Migaku
 
-A tiny Chrome extension for [Migaku](https://study.migaku.com/) kanji cards: when a card flips, it opens in the **font preview** (the "Aa" view) instead of playing the stroke-order drawing animation. No flash of the drawing, no permissions, nothing leaves your browser.
+A tiny Chrome extension for [Migaku](https://study.migaku.com/) kanji cards: when a card flips, it opens in the **font preview** (the "Aa" view) instead of playing the stroke-order drawing animation.
 
 > **Unofficial.** Not affiliated with, endorsed by, or supported by Migaku. "Migaku" is used only to describe what this extension works with; no Migaku logos or other assets are included.
 
